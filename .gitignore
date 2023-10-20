@@ -1,0 +1,6 @@
+data
+scratch
+logs
+__pycache__
+wandb
+commands.txt
