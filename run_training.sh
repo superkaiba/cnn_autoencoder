@@ -9,7 +9,7 @@ module load anaconda/3
 conda init
 conda activate cnn_autoencoder
 wandb enabled
-export LOGDIR=/home/mila/t/thomas.jiralerspong/scratch/cnn_autoencoder
+export LOGDIR=/home/mila/t/thomas.jiralerspong/scratch/cnn_autoencoder/normalized
 
 python /home/mila/t/thomas.jiralerspong/delta_ai/CNN_autoencoder/train.py \
      --architecture "original_wider_less_channels" \

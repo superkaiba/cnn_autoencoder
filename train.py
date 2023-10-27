@@ -35,7 +35,7 @@ torch.manual_seed(SEED)
 if torch.cuda.is_available():
     torch.cuda.manual_seed(SEED)
     
-def train(model, criterion, optimizer, trainloader, testloader, args, n_epochs=100):
+def train(model, criterion, optimizer, trainloader, testloader, args, logdir, n_epochs=100):
     for epoch in range(n_epochs):
         train_loss = 0.0
         num_train_batches = 0
@@ -71,7 +71,8 @@ def train(model, criterion, optimizer, trainloader, testloader, args, n_epochs=1
         wandb.log({"train_loss": train_loss / num_train_batches})
         wandb.log({"val_loss": test_loss / num_test_batches})
         if epoch % 10 == 0:
-            torch.save(model.state_dict(), f"{args.log_dir}/weights/{args.architecture}/autoencoder.pkl")
+            print("Saving model")
+            torch.save(model.state_dict(), f"{logdir}/autoencoder.pkl")
 
 def main():
     args = get_args()
@@ -86,17 +87,17 @@ def main():
 
     wandb.init(entity="thomasjiralerspong", project="cnn_autoencoder", config=args, name=args.architecture)
     dt_string = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
-
+    logdir = f"{args.log_dir}/weights/{args.architecture}/{dt_string}"
     if not args.debug:
-        make_dir(args.log_dir)
-        make_dir(f"{args.log_dir}/weights")
-        make_dir(f"{args.log_dir}/weights/{args.architecture}/{dt_string}")
+        os.makedirs(logdir, exist_ok=True)
+        # make_dir(args.log_dir)
+        # make_dir(f"{args.log_dir}/weights")
+        # make_dir(f"{args.log_dir}/weights/{args.architecture}/{dt_string}")
     # Define an optimizer and criterion
     criterion = nn.BCELoss()
     optimizer = optim.Adam(autoencoder.parameters())
     trainloader, testloader = get_loaders()
-    log_reconstruction_tiled
-    train(autoencoder, criterion, optimizer, trainloader, testloader, args, n_epochs=100)
+    train(autoencoder, criterion, optimizer, trainloader, testloader, args, logdir, n_epochs=100)
 
 
 if __name__ == '__main__':

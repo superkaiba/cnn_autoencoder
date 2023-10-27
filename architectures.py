@@ -89,11 +89,28 @@ class AutoencoderWiderLessChannels(nn.Module):
             nn.ConvTranspose2d(5, 3, kernel_size=4, stride=2, padding=1),  
             nn.Sigmoid(),
         )
-
-    def forward(self, x):
+    def encode(self, x):
         encoded = self.encoder(x)
-        decoded = self.decoder(encoded)
+        normalized = self.normalize(encoded)
+        return normalized
+    
+    def decode(self, x):
+        return self.decoder(x)
+    
+    def forward(self, x):
+        encoded = self.encode(x)
+        decoded = self.decode(encoded) 
         return encoded, decoded
+    
+    def normalize(self, x):
+        # b, c, h, w = x.shape
+        # x = x.view(b, c, -1)
+        # min = torch.min(x, dim=2, keepdim=True)[0].unsqueeze(-1) + 1e-7
+        # max = torch.max(x, dim=2, keepdim=True)[0].unsqueeze(-1) - 1e-7 
+        # x = x.view(b, c, h, w)
+        min = torch.min(x) + 1e-7
+        max = torch.max(x) - 1e-7
+        return (x - min) / (max - min)
 
 class AutoencoderWiderEvenLessChannels(nn.Module):
     def __init__(self):

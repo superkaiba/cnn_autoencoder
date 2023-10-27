@@ -8,6 +8,7 @@ def get_loaders():
         [transforms.ToTensor(), ])
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                             download=True, transform=transform)
+    breakpoint()
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=16,
                                                 shuffle=True, num_workers=2)
     testset = torchvision.datasets.CIFAR10(root='./data', train=False,
